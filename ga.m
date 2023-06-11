@@ -2,6 +2,7 @@
 objective_function = @(a, b, c, d) a + 2 * b + 3 * c + 4 * d - 30;
 
 % 1. Initialization
+chromosome_gens = 4;
 population = 6;
 Chromosome1 = { 12, 5, 23, 8 };
 Chromosome2 = { 2, 21, 18, 3 };
@@ -78,9 +79,23 @@ for i = 1 : length(crossoverIndices)
     end
     
     splittingIdx = randi([1, 3]);
-    Chromosomes{idx} = [ Chromosomes{idx}(1 : splittingIdx), Chromosomes{nextIdx}(splittingIdx + 1: 4 ) ];
+    Chromosomes{idx} = [ Chromosomes{idx}(1 : splittingIdx), Chromosomes{nextIdx}(splittingIdx + 1: chromosome_gens ) ];
 end
 
 % 4. Mutation
+mutation_rate = 0.1;
+total_gen = chromosome_gens * population;
+number_of_mutations = round(mutation_rate * total_gen);
+random_indices_for_mutation = 1 + randi(total_gen, [1, number_of_mutations]) - 1;
+
+for i = 1 : population
+    for j = 1 : chromosome_gens
+        curr_flattened_idx = i * chromosome_gens + j;
+        if find(curr_flattened_idx == random_indices_for_mutation)
+            newMutatedValue = randi([1, 30]);
+            Chromosomes{i}{j} = newMutatedValue;
+        end
+    end
+end
 
 
