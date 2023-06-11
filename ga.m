@@ -47,26 +47,20 @@ for i = 1 : 6
 end
 
 % 3e. Crossover
-crossOverIndices = {};
+NewChromosomes = {0, 0, 0, 0, 0, 0};
 crossover_rate = 0.25;
-for i = 1 : 6
-    if(R{i} < crossover_rate) 
-        crossOverIndices = [crossOverIndices, i];
-    end
-end
 
-for i = 1 : length(crossOverIndices)
-    currIdx = crossOverIndices{i};    
-    if i == length(crossOverIndices)
-        nextIdx = crossOverIndices{1};
-    else 
-        nextIdx = crossOverIndices{i + 1};
+for i = 1 : 6
+    for j = 1 : 6
+        if(R{i} < C{j})
+            NewChromosomes{i} = Chromosomes{j};
+            break;
+        end
     end
-    
-    temp = Chromosomes{ currIdx };
-    Chromosomes{ currIdx } = Chromosomes{ nextIdx };
-    Chromosomes{ nextIdx } = temp;
 end
+NewChromosomes = Chromosomes;
+
+disp(NewChromosomes);
 
 % 3f. Chromosome selection point
 
