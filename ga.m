@@ -48,8 +48,6 @@ end
 
 % 3e. Crossover
 NewChromosomes = {0, 0, 0, 0, 0, 0};
-crossover_rate = 0.25;
-
 for i = 1 : 6
     for j = 1 : 6
         if(R{i} < C{j})
@@ -58,11 +56,30 @@ for i = 1 : 6
         end
     end
 end
-NewChromosomes = Chromosomes;
 
-disp(NewChromosomes);
+Chromosomes = NewChromosomes;
 
-% 3f. Chromosome selection point
+% 3f. Chromosome selection
+crossover_rate = 0.25;
+crossoverIndices = [];
+for i = 1 : 6
+    if(R{i} < crossover_rate)
+        crossoverIndices = [crossoverIndices, i];
+    end
+end
+
+% 3g. crossover process
+for i = 1 : length(crossoverIndices)
+    idx = crossoverIndices(i);
+    if i == length(crossoverIndices)
+        nextIdx = 1;
+    else 
+        nextIdx = crossoverIndices(i + 1);
+    end
+    
+    splittingIdx = randi([1, 3]);
+    Chromosomes{idx} = [ Chromosomes{idx}(1 : splittingIdx), Chromosomes{nextIdx}(splittingIdx + 1: 4 ) ];
+end
 
 % 4. Mutation
 
