@@ -1,5 +1,5 @@
 % Defining the objective Function
-objective_function = @(vec) vec(1) + 2 * vec(2) + 3 * vec(3) + 4 * vec(4) - 30;
+objective_function = @(vec) abs(vec(1) + 2 * vec(2) + 3 * vec(3) + 4 * vec(4) - 30);
 
 % 1. Initialization
 chromosome_gens = 4;
@@ -13,18 +13,18 @@ Chromosome6 = [ 20, 5, 17, 1 ];
 
 Chromosomes = [ Chromosome1; Chromosome2; Chromosome3; Chromosome4; Chromosome5; Chromosome6 ];
 
-iterations = 50;
+iterations = 100;
 objective_values = zeros(iterations, 1);
 
 % Create a loop here
-for iteration = 1 : 50    
+for iteration = 1 : iterations     
     % 2. Evaluation (the fitness function)
     F_obj = zeros(1, 6);
     for i = 1 : 6
-        F_obj(i) = objective_function(Chromosomes(i, :));
+        F_obj(i) = abs(objective_function(Chromosomes(i, :)));
     end
 
-    objective_values(iteration) = max(F_obj);
+    objective_values(iteration) = min(F_obj);
     
     Fitness = zeros(1, 6);
     totalFitness = 0;
@@ -48,19 +48,30 @@ for iteration = 1 : 50
     % 3. Selection
     NewChromosomes = zeros(population, chromosome_gens);
     index = 1;
+    R =rand(1, 6);
     for i = 1 : 6
-        temp = rand;
-        while temp > C(index)
-            index = index + 1;
-        end
         
-        NewChromosomes(i, :) = Chromosomes(index, :);
+        if   0 < R(i) && R(i) < C(1)
+           NewChromosomes(i, :) = Chromosomes(1, :);
+        elseif C(1) < R(i)  && R(i) < C(2)
+            NewChromosomes(i, :) = Chromosomes(2, :);
+        elseif C(2) < R(i) && R(i) < C(3)
+            NewChromosomes(i, :) = Chromosomes(3, :);
+        elseif C(3) < R(i) && R(i)< C(4)
+            NewChromosomes(i, :) = Chromosomes(4, :);
+        elseif C(4) < R(i)  && R(i) < C(5)
+            NewChromosomes(i, :) = Chromosomes(5, :);
+        elseif C(5) < R(i)  &&  R(i) < C(6)
+            NewChromosomes(i, :) = Chromosomes(6, :);
+        end 
     end
 
     Chromosomes = NewChromosomes;
 
     % 4. Chromosome Crossover
-    crossover_rate = 0.25;
+     crossover_rate = 0.25;
+    R = rand(1, 6);
+
     result = zeros(population, chromosome_gens);
     r = zeros(1, population);
     parent = zeros(1, population);
@@ -68,7 +79,7 @@ for iteration = 1 : 50
 
     for i = 1 : population
         r(i) = rand;
-        if r(i) < crossover_rate
+        if R(i) < crossover_rate
             counter = counter + 1;
             parent(counter) = i;
         end
@@ -93,21 +104,15 @@ for iteration = 1 : 50
     total_gen = chromosome_gens * population;
     number_of_mutations = round(mutation_rate * total_gen);
     random_indices_for_mutation = 1 + randi(total_gen, [1, number_of_mutations]) - 1;
-
-    for i = 1 : population
-        for j = 1 : chromosome_gens
-            curr_flattened_idx = i * chromosome_gens + j;
-            if find(curr_flattened_idx == random_indices_for_mutation)
-                newMutatedValue = randi([1, 30]);
-                Chromosomes(i, j) = newMutatedValue;
-            end
-        end
+    
+    for i = 1: length(random_indices_for_mutation)
+        Chromosomes(random_indices_for_mutation(i)) = randi([1, 30]);
     end
+          
 end
 
 % Printing the best Chromosomes
 disp(Chromosomes);
-
 % Plot the objective function with iterations
 plot(1 : iterations, objective_values);
 xlabel('Iterations');
